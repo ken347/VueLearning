@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.js"
+      integrity="sha512-gh+25Y0CTHtw1FSJ4gDKYDFlZ84oV0l1bY5v7xrIwep7M1aV+7JgUaTu55bMerCblbPUD22MKlStyUwO9lHq4w=="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div id="app">
+      <section>
+        <div class="container">
+          <div class="title">
+            <img :src="src" class="logo" />
+            <h1>{{title}}</h1>
+            <div class="description">
+              <!-- <a class="arrow left" v-on:click="ChangeIndex(-1)">上一頁</a> -->
+              <!--如果不是第一天就秀起來-->
+              <a class="arrow left" @click="ChangeIndex(-1)" v-if="index>0"
+                >上一頁</a
+              >
+              <div class="menuItem white">
+                <span class="number">{{index+1}}</span>
+                <!-- <span class="type">{{menu[index].type}}</span> -->
+                <span class="type">{{today.type}}</span>
+                <a :href="menu[index].link" class="title" target="vue-iron"
+                  >{{today.title}}</a
+                >
+                <!--如果不是最後一天就秀出來-->
+                <a
+                  class="arrow right"
+                  @click="ChangeIndex(1)"
+                  v-if="index<pages-1"
+                  >下一頁</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <script>
+      let data = {
+        title: 'Vue.js 學習紀錄',
+        src: './img/photo-1494187570835-b188e7f0f26e.jpg',
+        index: 0,
+        menu: [
+          { type: 'Day1', title: '第一天', link: 'javascript:;' },
+          { type: 'Day2', title: '第二天', link: 'javascript:;' },
+          { type: 'Day3', title: '第三天', link: 'javascript:;' },
+          { type: 'Day4', title: '第四天', link: 'javascript:;' },
+        ],
+      }
+
+      let vm = new Vue({
+        el: '#app',
+        data: data,
+        computed: {
+          today() {
+            return this.menu[this.index]
+          },
+          pages() {
+            return this.menu.length
+          },
+        },
+        methods: {
+          ChangeIndex(offset) {
+            // ※出現負數會有問題this.index += offset
+            this.index =
+              (this.index + this.menu.length + offset) % this.menu.length
+          },
+        },
+      })
+    </script>
+  </body>
+</html>

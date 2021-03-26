@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.6/vue.js' integrity='sha512-A7yyopqTmAzRtHbpaDMWohddwQLiRldXY4jXJrPmyoOz5vv15/kTR6g6dulI27FxtwbFKrKtwNCNSokw9OAnQw==' crossorigin='anonymous'></script>
+</head>
+<body>
+    <div id="app">
+        <section>
+            <div class="container">
+                <div class="title">
+                    <!-- <img v-bind:src="src" class="logo"> -->
+                    <img :src="src" class="logo">
+                    <!-- <h1 v-text="title"></h1>
+                    <h1 v-html="title"></h1> -->
+                    <h1>{{title}}</h1>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        let data={
+            src:"./img/photo-1558981001-1995369a39cd.jpg",
+            title:"jquery版本"
+        };
+
+        let vm=new Vue(
+            {
+                el:"#app",
+                data:data
+            });
+    </script>
+</body>
+</html>
