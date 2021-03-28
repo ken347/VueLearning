@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.0/vue.js"
+      integrity="sha512-4EMifNzsGH/ixIeXTy7stkY1hrlVrYfOXlBBG0sGkCtVzHoCsyVxfXkzILZAMs/TI6MBrfDDK9YYWmhaG6BF2A=="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div id="app">
+      <section>
+        <div class="container">
+          <div class="title">
+            <div class="description">
+              <div @click="number++">{{number}}</div>
+            </div>
+            <br /><br />
+            <div class="description" @click="obj.num++">
+              <div>{{obj.num}}</div>
+            </div>
+            <br /><br />
+            <div class="description">
+              <div
+                v-for="(item,index) in objList"
+                @click="objListHandler(index)"
+              >
+                {{item.num}}
+              </div>
+            </div>
+            <br /><br />
+            <div class="description">
+              <div
+                v-for="(item,index) in numberList"
+                @click="numberListHandler(index)"
+              >
+                {{item}}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <script>
+      let data = {
+        obj: {
+          num: 0,
+        },
+        objList: [{ num: 0 }, { num: 0 }, { num: 0 }],
+        number: 0,
+        numberList: [0, 0, 0],
+      }
+
+      let vm = new Vue({
+        el: '#app',
+        data: data,
+        methods: {
+          objListHandler(idx) {
+            this.objList[idx].num++
+          },
+          numberListHandler(idx) {
+            //this.numberList[idx]++  this.numberList[idx]不是observer，畫面的資料只有在有發出通知時才更新畫面
+            this.$set(this.numberList, idx, this.numberList[idx] + 1) //用numberList去打通知
+          },
+        },
+        //監控資料
+        watch: {
+          number(newVal, oldVal) {
+            console.log('number', newVal, oldVal)
+          },
+          //這只有在obj物件參考改變時才能觸發
+          obj(newVal, oldVal) {
+            console.log('obj', newVal, oldVal)
+          },
+          //   ['obj.num'](newVal,oldVal){
+          //       console.log('obj.num',newVal,oldVal)
+          //   },
+          //觀測obj所有變化，newVal和oldVal會相同，因為物件實例只有一份
+          obj: {
+            handler(newVal, oldVal) {
+              console.log('obj', newVal, oldVal)
+            },
+            deep: true,
+          },
+          numberList(newVal, oldVal) {
+            console.log('numberList', newVal, oldVal)
+          },
+          //這樣觀測不到，因為是objList裡的物件在打通知
+          //   objList(newVal, oldVal) {
+          //     console.log('objList', newVal, oldVal)
+          //   },
+          objList: {
+            handler(newVal, oldVal) {
+              console.log('objList', newVal, oldVal)
+            },
+            deep: true,
+          },
+        },
+      })
+    </script>
+  </body>
+</html>
