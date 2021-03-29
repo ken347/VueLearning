@@ -1,0 +1,13 @@
+{
+  "name": "day13",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "json": "json-server --watch Db.json --port 8888"
+  },
+  "author": "Ken",
+  "license": "MIT",
+  "dependencies": {
+    "json-server": "^0.16.3"
+  }
+}
