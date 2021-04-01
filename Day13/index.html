@@ -8,25 +8,36 @@
   </head>
   <body>
     <div id="app">
-      <div class="container">
-        <div class="title">
-          <div class="input">
-            <input type="text" placeholder="會員名稱" />
-            <input type="text" placeholder="電子信箱" />
-            <button>送出</button>
-            <button>取消</button>
-          </div>
-          <div class="menu">
-            <div class="menuItem">
-              <span></span>
-              <span></span>
-              <a href=""></a>
-              <span class="edit">修改</span>
-              <span class="delete">刪除</span>
+      <section v-if="loading">Loading...</section>
+      <section v-else>
+        <div class="container">
+          <div class="title">
+            <div class="input">
+              <input
+                type="text"
+                placeholder="會員名稱"
+                v-model.trim="input.name"
+              />
+              <input
+                type="text"
+                placeholder="電子信箱"
+                v-model.trim="input.email"
+              />
+              <button @click="Submit">送出</button>
+              <button @click="Cancel">取消</button>
+            </div>
+            <div class="menu">
+              <div class="menuItem" v-for="(item,index) in contacts">
+                <span>{{item.id}}</span>
+                <span>{{item.name}}</span>
+                <a :href="'mailto:'+item.email">{{item.email}}</a>
+                <span class="edit" @click="Edit(index)">修改</span>
+                <span class="delete" @click="Delete(index)">刪除</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
     </div>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.0/vue.js"
@@ -38,6 +49,97 @@
       integrity="sha512-Kg0CewqPNO/ziOJuCq5eyl3P/V6OLz/Lb1I2m+yKS3lHZcGVFN/KOew18rWP+kTsL7haYdaqGjwHQCZrN0heLQ=="
       crossorigin="anonymous"
     ></script>
-    <script></script>
+    <script>
+      ;(function (Vue) {
+        new Vue({
+          el: '#app',
+          data: {
+            editIdx: null,
+            loading: false,
+            contacts: [],
+            input: {
+              name: '',
+              email: '',
+            },
+          },
+          methods: {
+            Submit() {
+              let { name, email } = this.input
+              if (!name || !email) {
+                return
+              }
+              this.loading = true
+              if (this.editIdx === null) {
+                axios
+                  .post('http://localhost:8888/contact', { name, email })
+                  .then((res) => {
+                    this.contacts.input(res.data)
+                    this.Cancel()
+                    thsi.loading = false
+                  })
+                  .catch((err) => {
+                    console.log(err)
+                  })
+              } else {
+                axios
+                  .put(
+                    `http://localhost:8888/contact/${
+                      this.contacts[this.editIdx].id
+                    }`,
+                    this.input
+                  )
+                  .then((res) => {
+                    this.contacts[this.editIdx] = res.data
+                    this.loading = false
+                    this.Cancel()
+                  })
+                  .catch((err) => {
+                    console.log(err)
+                  })
+              }
+            },
+            Cancel() {
+              this.editIdx = null
+              this.input = { name: '', email: '' }
+            },
+            Delete(idx) {
+              let target = this.contacts[idx]
+              if (confirm(`是否刪除${target.name}?`)) {
+                this.loading = true
+                axios
+                  .delete(
+                    `http://localhost:8888/contact/${this.contacts[idx].id}`
+                  )
+                  .then((res) => {
+                    this.contacts.splice(idx, 1)
+                    this.Cancel()
+                    this.loading = false
+                  })
+                  .catch((err) => {
+                    console.log(err)
+                  })
+              }
+            },
+            Edit(idx) {
+              let { name, email } = this.contacts[idx]
+              this.input = { name, email }
+              this.editIdx = idx
+            },
+          },
+          mounted() {
+            this.loading = true
+            axios
+              .get('http://localhost:8888/contact')
+              .then((res) => {
+                this.contacts = res.data
+                this.loading = false
+              })
+              .catch((err) => {
+                console.log(err)
+              })
+          },
+        })
+      })(Vue)
+    </script>
   </body>
 </html>
